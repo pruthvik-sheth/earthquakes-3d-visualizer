@@ -1,23 +1,30 @@
 import * as THREE from 'three'
 import CustomPinShader from "../shaders/CustomPinShader"
 import { useRef, useEffect, useState, useLayoutEffect } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { Html } from '@react-three/drei'
+import { useFrame, extend } from '@react-three/fiber'
 
-const Pin = ({ latitude, longitude, magnitude, earthRef }) => {
+extend({ CustomPinShader })
+
+const Pin = ({ latitude, longitude, magnitude, place, earthRef }) => {
 
 
     const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 })
-    const [target, setTarget] = useState(new THREE.Vector3(0, 0, 0))
+    // const [target, setTarget] = useState(new THREE.Vector3(0, 0, 0))
+    const [popUpVisible, setPopUpVisible] = useState(true)
 
 
 
     const planeRef = useRef()
-    const shaderRef = useRef()
+    const customPinShaderRef = useRef()
+
+
 
 
     useFrame(
-        ({ clock }) => {
-            shaderRef.current.uniforms.uTime.value = clock.getElapsedTime()
+        (state, delta) => {
+            customPinShaderRef.current.uTime += delta
+            // shaderRef.current.uniforms.uTime.value = clock.getElapsedTime()
             // console.log(shaderRef.current.uniforms.uTime.value);
         }
     )
@@ -28,16 +35,17 @@ const Pin = ({ latitude, longitude, magnitude, earthRef }) => {
         const radLng = ((90 + longitude) * (Math.PI / 180)) // here 90 + is for cancelling the texture offset
 
 
-        const vector = new THREE.Vector3().setFromSphericalCoords(2.5, radLat, radLng)
+        const vector = new THREE.Vector3().setFromSphericalCoords(2, radLat, radLng)
 
-        console.log(vector);
+        // console.log(vector);
 
         setCoordinates({
             x: vector.x,
             y: vector.y,
             z: vector.z
         })
-        console.log(coordinates);
+
+
 
     }
 
@@ -51,7 +59,7 @@ const Pin = ({ latitude, longitude, magnitude, earthRef }) => {
         lookDirection.subVectors(posi, earthRef.current.position).normalize()
         mytarget.copy(posi).add(lookDirection);
 
-        setTarget(mytarget)
+        planeRef.current.lookAt(mytarget)
 
     }
 
@@ -65,32 +73,52 @@ const Pin = ({ latitude, longitude, magnitude, earthRef }) => {
 
     useEffect(() => {
 
+        customPinShaderRef.current.transparent = true
+        customPinShaderRef.current.blending = THREE.AdditiveBlending
         calculateCartesianCoords()
-        computePlaneAlignment()
-
 
     }, [])
 
 
+    useEffect(() => {
+        computePlaneAlignment()
+    }, [coordinates])
+
 
 
     return (
-        <mesh onUpdate={self => self.lookAt(target)} ref={planeRef} scale={0.4} position={[coordinates.x, coordinates.y, coordinates.z]} >
+        <mesh
+            ref={planeRef}
+            scale={magnitude / 50}
+            position={[coordinates.x, coordinates.y, coordinates.z]}
+            onClick={(e) => {
+                popUpVisible ? setPopUpVisible(false) : setPopUpVisible(true)
+                console.log('click');
+            }}
+        >
             {/* <sphereGeometry args={[(mag / 80), 16, 16]} /> */}
             {/* <planeGeometry /> */}
             <circleGeometry args={[1, 16]} />
-            {/* <meshStandardMaterial color="red" /> */}
-            <shaderMaterial
-                ref={shaderRef}
-                attach="material"
-                args={[CustomPinShader]}
-                // blending={THREE.AdditiveBlending}
-                transparent={true}
-                uniforms={{
-                    uTime: { value: 0.0 },
-                    uColor: { value: (magnitude) < 7 ? new THREE.Color('red') : new THREE.Color('red') },
-                }}
+            <customPinShader
+                ref={customPinShaderRef}
+                key={CustomPinShader.key}
+                uColor={(magnitude) < 3 ? 'green' : 'red'}
             />
+
+            {
+                popUpVisible ?
+                    <Html
+                        position={[0, 1, 0]}
+                        distanceFactor={1}
+                        // center
+                        wrapperClass="label"
+                        occlude={[earthRef]}
+                    >
+                        <div>Place: {place},</div>
+                        <div>Magnitude: {magnitude}</div>
+                    </Html>
+                    : null
+            }
         </mesh>
     )
 }

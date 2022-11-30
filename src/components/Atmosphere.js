@@ -11,7 +11,7 @@ const Atmosphere = () => {
 
     return (
         <mesh>
-            <sphereGeometry args={[2.8, 64, 64]} />
+            <sphereGeometry args={[2.3, 32, 32]} />
             <shaderMaterial
                 attach="material"
                 args={[CustomAtmosphereShader]}

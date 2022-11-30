@@ -1,10 +1,19 @@
 import glsl from 'babel-plugin-glsl/macro'
+import { shaderMaterial } from "@react-three/drei"
+import * as THREE from 'three'
 
-const CustomPinShader = {
 
-    vertexShader: glsl`
+const CustomPinShader = shaderMaterial(
+    {
+        uTime: 0,
+        uColor: new THREE.Color('blue')
+    },
+
+    //Vertex Shader
+    glsl`
 
         varying vec2 vertexUV;
+        varying vec3 vertexPos;
         uniform float uTime;
 
         void main() {
@@ -19,11 +28,13 @@ const CustomPinShader = {
         }
     `,
 
-    fragmentShader: glsl`
+    //Fragment Shader
+    glsl`
     
     precision mediump float;
 
     varying vec2 vertexUV;
+    varying vec3 vertexPos;
 
     uniform vec3 uColor;
     uniform float uTime;
@@ -31,16 +42,13 @@ const CustomPinShader = {
     
     void main() {
 
-        float strength = 0.015 / sin(distance(vertexUV, vec2(0.5)) - (uTime * 2.0));
-        // float intensity = pow(0.6 - dot(vertexNormal, vec3(0,0,1.0)), 2.8);
-        gl_FragColor = vec4(sin(vertexUV.x + uTime * 2.0) * uColor ,1.0);
-        gl_FragColor = vec4(strength + 1.0 ,strength,strength ,strength);
+        float strength = 0.015 / (sin((distance(vertexUV, vec2(0.5)) - (uTime) * 4.0)) + 1.0);
 
-    }
+        gl_FragColor = vec4(strength+ uColor.r,strength + uColor.g,strength + uColor.b ,strength);
 
-    `
 
-}
+    }`
+)
 
 
 

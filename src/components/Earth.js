@@ -1,11 +1,13 @@
 import Pin from "./Pin"
 import { useLoader, extend } from "@react-three/fiber"
 import { TextureLoader } from "three"
-import { useRef, useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useState } from "react"
 import CustomEarthShader from "../shaders/CustomEarthShader"
 import { fakeData } from "./fakeData"
 import Atmosphere from "./Atmosphere"
+import { useSelector } from "react-redux"
+import { filterTo7Days, filterToPastDay } from "../redux/selectors/filters"
 
 extend({ CustomEarthShader })
 
@@ -16,46 +18,55 @@ const Earth = () => {
 
     const earthRef = useRef()
 
-    const [data, setData] = useState(fakeData)
+    const [array, setArray] = useState([])
 
-    // console.log(data);
+    const { pastHour, past30Days, current } = useSelector((state) => state.earthquakes)
 
+    const past7Days = filterTo7Days(past30Days)
 
-    async function fetchData() {
-        try {
-            const res = await fetch("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_day.geojson");
-            const data = await res.json();
-            // setData(data)
-            console.log(data.features)
+    const pastDay = filterToPastDay(past30Days)
 
-
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     useEffect(() => {
-        // fetchData()
-    }, [])
+
+        if (current == 'PAST30DAYS') {
+            setArray(past30Days)
+        }
+        else if (current == 'PAST7DAYS') {
+            setArray(past7Days)
+        }
+        else if (current == 'PASTDAY') {
+            setArray(pastDay)
+        }
+        else {
+            setArray(pastHour)
+        }
+
+        // console.log('helloooooooo');
+    }, [current, past30Days, pastHour])
+
 
     return (
         <>
+
             {/* <mesh rotation-y={-Math.PI * 0.5} > */}
             <mesh ref={earthRef}>
-                <sphereGeometry args={[2.5, 64, 64]} />
+                <sphereGeometry args={[2, 48, 48]} />
                 <customEarthShader uTexture={earthTexture} />
             </mesh>
 
             <Atmosphere />
 
-            {data?.features.map(
+            {/* <Pin latitude={-8.6335} longitude={-71.4124} magnitude={30.2} earthRef={earthRef} /> */}
+
+            {array.map(
                 (earthquake) => {
-                    // <Pin latitude={-8.6335} longitude={-71.4124} />
                     return (<Pin
                         key={earthquake.id}
-                        latitude={earthquake.geometry.coordinates[1]}
-                        longitude={earthquake.geometry.coordinates[0]}
-                        magnitude={earthquake.properties.mag}
+                        latitude={earthquake.latitude}
+                        longitude={earthquake.longitude}
+                        magnitude={earthquake.magnitude}
+                        place={earthquake.place}
                         earthRef={earthRef}
                     />
                     )

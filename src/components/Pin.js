@@ -98,11 +98,11 @@ const Pin = ({ latitude, longitude, magnitude, place, earthRef }) => {
         >
             {/* <sphereGeometry args={[(mag / 80), 16, 16]} /> */}
             {/* <planeGeometry /> */}
-            <circleGeometry args={[1, 16]} />
+            <circleGeometry args={[(magnitude < 2 ? 3 : magnitude / 4), 16]} />
             <customPinShader
                 ref={customPinShaderRef}
                 key={CustomPinShader.key}
-                uColor={(magnitude) < 3 ? 'green' : 'red'}
+                uColor={(magnitude) < 3.5 ? 'green' : 'red'}
             />
 
             {

@@ -144,3 +144,14 @@ footer a {
   align-items: center;
   justify-content: space-between;
 }
+
+.loader {
+  color: white;
+  font-weight: bolder;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+}

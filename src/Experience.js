@@ -15,7 +15,7 @@ const Experience = () => {
     async function fetchData() {
 
         const urls = [
-            'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_hour.geojson',
+            'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/1.0_hour.geojson',
             'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/significant_month.geojson'
         ]
 

@@ -1,5 +1,4 @@
 import CustomAtmosphereShader from "../shaders/CustomAtmosphereShader"
-import { extend } from "@react-three/fiber"
 import * as THREE from 'three'
 
 // extend({ CustomAtmosphereShader })
@@ -7,6 +6,7 @@ import * as THREE from 'three'
 // console.log(CustomAtmosphereShader);
 
 const Atmosphere = () => {
+
 
 
     return (

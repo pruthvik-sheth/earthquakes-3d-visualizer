@@ -25,20 +25,24 @@ canvas {
 }
 
 body {
-  background-color: rgb(15, 15, 15);
+  /* background-color: rgb(15, 15, 15); */
+  background-color: #110827;
 }
 
 .label>div {
-  background-color: rgba(0, 0, 0, 0.637);
-  padding: 0.8rem 0.8rem;
-  color: white;
+  position: relative;
+  background-color: #49e188e0;
+  padding: 1rem 1rem;
+  color: black;
   user-select: none;
   width: 15rem;
-  text-align: center;
-  border-radius: 1rem;
-  border: 1px solid #4386e4;
+  border-radius: 0.5rem;
+  border: 2px solid #49e188;
 }
 
+.boldify {
+  font-weight: bolder;
+}
 
 .container {
 
@@ -135,7 +139,7 @@ footer {
 }
 
 footer a {
-  color: #4386e4;
+  color: #6b39ff;
 }
 
 .footer_items {

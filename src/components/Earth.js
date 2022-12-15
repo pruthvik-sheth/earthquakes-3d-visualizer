@@ -16,7 +16,10 @@ const Earth = () => {
 
     const earthTexture = useLoader(TextureLoader, 'earth_nasa.jpg')
 
+
     const earthRef = useRef()
+    const earthShaderRef = useRef()
+
 
     const [array, setArray] = useState([])
 
@@ -25,6 +28,7 @@ const Earth = () => {
     const past7Days = filterTo7Days(past30Days)
 
     const pastDay = filterToPastDay(past30Days)
+
 
 
     useEffect(() => {
@@ -52,7 +56,7 @@ const Earth = () => {
             {/* <mesh rotation-y={-Math.PI * 0.5} > */}
             <mesh ref={earthRef}>
                 <sphereGeometry args={[2, 48, 48]} />
-                <customEarthShader uTexture={earthTexture} />
+                <customEarthShader ref={earthShaderRef} key={CustomEarthShader.key} uTexture={earthTexture} />
             </mesh>
 
             <Atmosphere />
@@ -67,6 +71,7 @@ const Earth = () => {
                         longitude={earthquake.longitude}
                         magnitude={earthquake.magnitude}
                         place={earthquake.place}
+                        time={earthquake.time}
                         earthRef={earthRef}
                     />
                     )

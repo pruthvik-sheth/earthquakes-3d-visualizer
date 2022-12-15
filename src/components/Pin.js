@@ -6,7 +6,7 @@ import { useFrame, extend } from '@react-three/fiber'
 
 extend({ CustomPinShader })
 
-const Pin = ({ latitude, longitude, magnitude, place, earthRef }) => {
+const Pin = ({ latitude, longitude, magnitude, place, earthRef, time }) => {
 
 
     const [coordinates, setCoordinates] = useState({ x: 0, y: 0, z: 0 })
@@ -18,6 +18,13 @@ const Pin = ({ latitude, longitude, magnitude, place, earthRef }) => {
     const planeRef = useRef()
     const customPinShaderRef = useRef()
 
+    const dateFormat = new Date(time)
+    const day = dateFormat.getDate()
+    const month = dateFormat.getMonth() + 1
+    const year = dateFormat.getFullYear()
+    const hours = dateFormat.getHours()
+    const mins = dateFormat.getMinutes()
+    const secs = dateFormat.getSeconds()
 
 
 
@@ -93,7 +100,6 @@ const Pin = ({ latitude, longitude, magnitude, place, earthRef }) => {
             position={[coordinates.x, coordinates.y, coordinates.z]}
             onClick={(e) => {
                 popUpVisible ? setPopUpVisible(false) : setPopUpVisible(true)
-                console.log('click');
             }}
         >
             {/* <sphereGeometry args={[(mag / 80), 16, 16]} /> */}
@@ -108,14 +114,15 @@ const Pin = ({ latitude, longitude, magnitude, place, earthRef }) => {
             {
                 popUpVisible ?
                     <Html
-                        position={[0, 1, 0]}
+                        position={[0, 0, 1.5]}
                         distanceFactor={1}
                         // center
                         wrapperClass="label"
                         occlude={[earthRef]}
                     >
-                        <div>Place: {place},</div>
-                        <div>Magnitude: {magnitude}</div>
+                        <div><span className='boldify'>Place:</span> {place},</div>
+                        <div><span className='boldify'>Magnitude:</span> {magnitude}</div>
+                        <div><span className='boldify'>Time:</span> {day}/{month}/{year} {hours}:{mins}:{secs} IST</div>
                     </Html>
                     : null
             }

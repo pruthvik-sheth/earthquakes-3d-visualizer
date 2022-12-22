@@ -26,19 +26,21 @@ canvas {
 
 body {
   /* background-color: rgb(15, 15, 15); */
-  background-color: #110827;
+  /* background-color: #110827; */
+  background-color: #1e1e1e;
 }
 
 .label>div {
   position: relative;
-  background-color: #49e188e0;
+  background-color: #3f3f3f54;
   padding: 1rem 1rem;
-  color: black;
+  color: #ffffff;
   user-select: none;
   width: 15rem;
   border-radius: 0.5rem;
-  border: 2px solid #49e188;
+  backdrop-filter: blur(5px);
 }
+
 
 .boldify {
   font-weight: bolder;

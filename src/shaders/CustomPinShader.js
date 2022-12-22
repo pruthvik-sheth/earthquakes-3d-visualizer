@@ -38,13 +38,20 @@ const CustomPinShader = shaderMaterial(
 
     uniform vec3 uColor;
     uniform float uTime;
+    uniform vec2 uResolution;
 
     
     void main() {
 
-        float strength = 0.015 / (sin((distance(vertexUV, vec2(0.5)) - (uTime) * 4.0)) + 1.0);
+        // float strength = 0.015 / (sin((distance(vertexUV, vec2(0.5)) - (uTime) * 4.0)) + 1.0);
 
-        gl_FragColor = vec4(strength+ uColor.r,strength + uColor.g,strength + uColor.b ,strength);
+        // gl_FragColor = vec4(strength+ uColor.r,strength + uColor.g,strength + uColor.b ,strength);
+
+        float distance = length(vertexUV - 0.5); // distance from the center of the window
+
+        float wave = sin(distance * 30.0 - uTime * 2.0) / distance; // wave pattern
+
+        gl_FragColor = vec4(wave,0.0,0.0, 0.8); // set the output color
 
 
     }`

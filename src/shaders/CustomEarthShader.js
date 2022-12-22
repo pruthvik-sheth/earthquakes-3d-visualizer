@@ -50,22 +50,27 @@ const CustomEarthShader = shaderMaterial(
 
         vec4 color = texture2D(uTexture, vertexUV);
 
+        
         // vec3 hazeColor = vec3(0.3,0.6,1.0);
-        vec3 hazeColor = vec3(0.41,0.22,1.0);
+        // vec3 hazeColor = vec3(0.41,0.22,1.0);
+        vec3 hazeColor = vec3(0.09,0.09,0.09);
         vec3 viewDirectionW = normalize(cameraPosition - vertexPositionW);
         float fresnelTerm = dot(viewDirectionW, vertexNoramlW);
-
         fresnelTerm = clamp(1.0 - fresnelTerm, 0., 1.);
+
+        vec3 dotsColor = vec3(0.5,0.5,0.5);
+        vec3 landRawColor = vec3(0.15,0.15,0.15);
+        vec3 finalLandColor = vec3(landRawColor * fresnelTerm + landRawColor);
+
+        vec3 finalWaterColor = vec3(hazeColor * fresnelTerm + hazeColor);
       
         // Check if the color is blueish
         if (color.b > color.r && color.b > color.g) {
           // If it is, apply the texture color without any modifications
-          gl_FragColor = vec4(0.06, 0.06, 0.06, 1.0);
-          gl_FragColor = vec4(hazeColor * fresnelTerm + hazeColor ,1.0);
+          gl_FragColor = vec4(finalWaterColor,1.0);
 
-          
-
-        } else {
+        } 
+        else {
           // If it's not, apply the modified color with the dot effect
 
                // Calculate the size of the dots
@@ -82,20 +87,13 @@ const CustomEarthShader = shaderMaterial(
             float x = mod(vertexUV.x, dotDistance) / dotDistance * 0.8;
             float y = mod(vertexUV.y, dotDistance) / dotDistance * 0.5;
 
-            // Create a smooth transition between the dot and the background
-            float transition = 1.0 - distance(vec2(x, y), vec2(0.5, 0.5)) / 0.5;
-
-            // // Interpolate between the texture color and the background color
-            // vec4 outColor = mix(vec4(0.0, 1.0, 1.0, 1.0), vec4(1.0, 0.06, 0.06, 1.0), transition);
-
-            
-
             if (x < dotSize && y < dotSize) {
 
-                gl_FragColor = vec4(hazeColor * fresnelTerm + hazeColor,1.0);
+                gl_FragColor = vec4(dotsColor,1.0);
 
             } else {
-                gl_FragColor = vec4(0.06, 0.06, 0.06, 1.0);
+                // gl_FragColor = vec4(0.06, 0.06, 0.06, 1.0);
+                gl_FragColor = vec4(finalLandColor, 1.0);
 
             }
 
